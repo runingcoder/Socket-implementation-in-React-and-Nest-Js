@@ -31,7 +31,6 @@ export class MessagesGateway {
     @ConnectedSocket() client: Socket,
   ) {
     const message = this.messagesService.create(text, client.id);
-
     // emitting the message to every connected client
     // adsfa.emit('emitmessage', payload)
     this.server.emit('message', message);
