@@ -12,12 +12,17 @@ function App() {
   const [typingDisplay, setTyping] = useState('');
 
   useEffect(() => {
+    // socket.emit('eventname', payload, response)
     socket.emit('findAllMessages', {}, (response) => {
       setMessages(response);
     });
+    // get's new message for updating the value of messages state in the client.
     socket.on('message', (message) => {
-      setMessages(prevMessages => [...prevMessages, message]);
+      console.log(messages)
+
+    setMessages((messages) => [...messages, message]);
       console.log(message)
+      console.log(`The messages are :${messages}`)
     });
     // sus
     socket.on('typing', {}, ({ name, typingDisplay }) => {

@@ -22,7 +22,7 @@ getClientName(client_id: string) {
       text: text,
     }
     this.messages.push(message);
-    return this.messages;
+    return message;
   }
 
   findAll() {
