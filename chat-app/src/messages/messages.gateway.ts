@@ -11,13 +11,17 @@ import { Socket, Server } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
-  },
-})
+
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Access-Control-Allow-Origin', 'Content-Type'],
+    credentials: true,
+  }})
 export class MessagesGateway {
   @WebSocketServer()
-  // reference to the websocket instance
   server: Server;
+    // reference to the websocket instance
+
   constructor(private readonly messagesService: MessagesService) { }
 
   @SubscribeMessage('findAllMessages')

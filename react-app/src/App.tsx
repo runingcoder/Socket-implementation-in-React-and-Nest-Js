@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import React from 'react';
 
 function App() {
-  const socket = io("http://localhost:3000");
-
+  const socket = io("http://localhost:3000", {
+    withCredentials: true, // Allow sending cookies and credentials
+  });
   interface Message {
     name: string;
     text: string;
@@ -85,14 +86,11 @@ console.log(joined)
                 </div>
               ))}
               <div className="join-container">   
-              <h1>Typing statusss;;</h1>           
-                <h2>{typingDisplay}</h2>
                 <form onSubmit={sendMessage}>
                 <input
                 value={messageValue}
                   type="text"
                   placeholder="Type a message..."
-                  onInput={emitTyping}                  
                   onChange={(e) => setMessageValue(e.target.value)}  />
                 <button >Send</button>
                 </form>
