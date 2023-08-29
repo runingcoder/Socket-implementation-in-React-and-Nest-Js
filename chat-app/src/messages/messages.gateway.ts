@@ -68,7 +68,9 @@ export class MessagesGateway {
   ) {
     // the one who send request to typing, his client id is stored in the client object
     // and we get it's name.
+    console.log(client.id)
     const name = this.messagesService.getClientName(client.id);
+    console.log(name)
     // need to send the typing status to clients (two users) but using broadcast sends it to the
     // non sender only, -- the other receiver
     client.broadcast.emit('typing', { name, isTyping });

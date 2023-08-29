@@ -33,10 +33,12 @@ getClientName(client_id: string) {
     }
     console.log("Created message: ", message);
     this.messages.push(message);
+    console.log("Updated messages array: ", this.messages);
     return message;
   }
 
   findAll() {
+    console.log(this.messages)
     return this.messages;
   }
 

@@ -1,34 +1,42 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import { io } from "socket.io-client";
+import React from 'react';
 
 function App() {
   const socket = io("http://localhost:3000");
 
+  interface Message {
+    name: string;
+    text: string;
+  }
 
-const [currentClient, setCurrentClient] = useState('');  
+  const [joined, setJoined] = useState(localStorage.getItem("isLoggedIn") !== null);
+
+const [currentClient, setCurrentClient] = useState(() =>
+  localStorage.getItem("isLoggedIn")
+    ? localStorage.getItem("isLoggedIn")
+    : null);
+
   const [messageValue, setMessageValue] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [joined, setJoined] = useState(false);
+  const [messages, setMessages] = useState([] as Message[]);
   const [name, setName] = useState('');
   const [typingDisplay, setTyping] = useState('');
-
   useEffect(() => {
+console.log(joined)
+
     // socket.emit('eventname', payload, response)
     socket.emit('findAllMessages', {}, (response) => {
       setMessages(response);
     });
     // get's new message for updating the value of messages state in the client.
-    socket.on('message', (message) => {
-      console.log(messages)
-
+    socket.on('message', (message) => {     
     setMessages((messages) => [...messages, message]);
       console.log(message)
-      console.log(`The messages are :${messages}`)
     });
     // sus
-    socket.on('typing', {}, ({ name, typingDisplay }) => {
-      if (typingDisplay) {
+    socket.on('typing', ({ name, isTypingStateFromServer }) => {
+      if (isTypingStateFromServer) {
         setTyping(`${name} is typing`);
       } else {
         setTyping('');
@@ -37,26 +45,32 @@ const [currentClient, setCurrentClient] = useState('');
   }, []);
   // eslint-disable-next-line
   let timeout;
-  const emitTyping = () => {
-    socket.emit('typing', { typingDisplay: true });
+  const emitTyping = (e) => {
+    e.preventDefault();
+    socket.emit('typing', { isTyping: true });
     timeout = setTimeout(() => {
-      socket.emit('typing', { typingDisplay: false });}, 2000)
+      socket.emit('typing', { isTyping: false });}, 2000)
    
   }
   // sus
 
-  const JoinAction = () => {
+  const JoinAction = (e) => {
+    e.preventDefault();
     socket.emit('join', { name: name }, (response) => {
+      console.log(response)
       setCurrentClient(response)
+      localStorage.setItem('isLoggedIn', response);
       setJoined(true);
       console.log(joined)
     });
   }
 
-  const sendMessage = () => {
+  const sendMessage = (e) => {
+    e.preventDefault();
     socket.emit('createMessage', { name: currentClient, text: messageValue }, () => {
-      setMessageValue('');
+      
          });
+         setMessageValue('');
   }
 
   return (
@@ -73,14 +87,15 @@ const [currentClient, setCurrentClient] = useState('');
               <div className="join-container">   
               <h1>Typing statusss;;</h1>           
                 <h2>{typingDisplay}</h2>
+                <form onSubmit={sendMessage}>
                 <input
+                value={messageValue}
                   type="text"
                   placeholder="Type a message..."
-                  onInput={emitTyping}
-                  
-                  onChange={(e) => setMessageValue(e.target.value)}
-                />
-                <button onClick={sendMessage}>Send</button>
+                  onInput={emitTyping}                  
+                  onChange={(e) => setMessageValue(e.target.value)}  />
+                <button >Send</button>
+                </form>
               </div>
             </>
           ) : (
