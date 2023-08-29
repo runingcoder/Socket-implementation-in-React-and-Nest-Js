@@ -31,11 +31,11 @@ export class MessagesGateway {
   // here, 'createMessage' is the event.
   @SubscribeMessage('createMessage')
   async create(
-    @MessageBody('name') client: string,
+    @ConnectedSocket() client: Socket,
     @MessageBody('text') text: string,
    
   ) {
-    const message = await this.messagesService.create(text, client);
+    const message = await this.messagesService.create(text, client.id);
     // emitting the message to every connected client
     // adsfa.emit('emitmessage', payload)
     this.server.emit('message', message);
@@ -67,7 +67,7 @@ export class MessagesGateway {
 
   @SubscribeMessage('typing')
   typing(
-    @MessageBody('typing') isTyping: boolean,
+    @MessageBody('isTyping') isTyping: boolean,
     @ConnectedSocket() client: Socket,
   ) {
     // the one who send request to typing, his client id is stored in the client object
@@ -77,6 +77,7 @@ export class MessagesGateway {
     console.log(name)
     // need to send the typing status to clients (two users) but using broadcast sends it to the
     // non sender only, -- the other receiver
+    console.log('typing method called with name: ', name, ' and isTyping: ', isTyping)
     client.broadcast.emit('typingName', { name, isTyping });
   }
 }
