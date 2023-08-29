@@ -67,7 +67,7 @@ export class MessagesGateway {
 
   @SubscribeMessage('typing')
   typing(
-    @MessageBody('isTyping') isTyping: boolean,
+    @MessageBody('typing') isTyping: boolean,
     @ConnectedSocket() client: Socket,
   ) {
     // the one who send request to typing, his client id is stored in the client object
@@ -77,6 +77,6 @@ export class MessagesGateway {
     console.log(name)
     // need to send the typing status to clients (two users) but using broadcast sends it to the
     // non sender only, -- the other receiver
-    client.broadcast.emit('typing', { name, isTyping });
+    client.broadcast.emit('typingName', { name, isTyping });
   }
 }

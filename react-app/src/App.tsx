@@ -4,9 +4,7 @@ import { io, Socket } from "socket.io-client";
 import React from 'react';
 
 function App() {
-  const socket = io("http://localhost:3000", {
-    withCredentials: true, // Allow sending cookies and credentials
-  });
+  const [socket, setSocket] = useState<Socket | null>(null);
   interface Message {
     name: string;
     text: string;
@@ -24,40 +22,47 @@ const [currentClient, setCurrentClient] = useState(() =>
   const [name, setName] = useState('');
   const [typingDisplay, setTyping] = useState('');
   useEffect(() => {
-console.log(joined)
+    const newSocket = io("http://localhost:3000", {
+      withCredentials: true, // Allow sending cookies and credentials
+    });
+    setSocket(newSocket);
+  
 
     // socket.emit('eventname', payload, response)
-    socket.emit('findAllMessages', {}, (response) => {
+    newSocket.emit('findAllMessages', {}, (response) => {
       setMessages(response);
     });
     // get's new message for updating the value of messages state in the client.
-    socket.on('message', (message) => {     
+    newSocket.on('message', (message) => {     
     setMessages((messages) => [...messages, message]);
       console.log(message)
     });
     // sus
-    socket.on('typing', ({ name, isTypingStateFromServer }) => {
+    newSocket.on('typingName', ({ name, isTypingStateFromServer }) => {
       if (isTypingStateFromServer) {
         setTyping(`${name} is typing`);
       } else {
         setTyping('');
       }
     });
+    return () => {
+      // Clean up the WebSocket connection when component unmounts
+      newSocket.disconnect();
+    };
   }, []);
   // eslint-disable-next-line
   let timeout;
   const emitTyping = (e) => {
     e.preventDefault();
-    socket.emit('typing', { isTyping: true });
+    socket?.emit('typing', { isTyping: true });
     timeout = setTimeout(() => {
-      socket.emit('typing', { isTyping: false });}, 2000)
-   
+      socket?.emit('typing', { isTyping: false });}, 2000)   
   }
   // sus
 
   const JoinAction = (e) => {
     e.preventDefault();
-    socket.emit('join', { name: name }, (response) => {
+    socket?.emit('join', { name: name }, (response) => {
       console.log(response)
       setCurrentClient(response)
       localStorage.setItem('isLoggedIn', response);
@@ -68,7 +73,7 @@ console.log(joined)
 
   const sendMessage = (e) => {
     e.preventDefault();
-    socket.emit('createMessage', { name: currentClient, text: messageValue }, () => {
+    socket?.emit('createMessage', { name: currentClient, text: messageValue }, () => {
       
          });
          setMessageValue('');
@@ -86,10 +91,13 @@ console.log(joined)
                 </div>
               ))}
               <div className="join-container">   
+              <h1>Typing statusss;;</h1>           
+                <h2>{typingDisplay}</h2>
                 <form onSubmit={sendMessage}>
                 <input
                 value={messageValue}
                   type="text"
+                  onInput={emitTyping}
                   placeholder="Type a message..."
                   onChange={(e) => setMessageValue(e.target.value)}  />
                 <button >Send</button>

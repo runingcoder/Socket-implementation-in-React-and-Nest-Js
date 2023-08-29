@@ -11,14 +11,18 @@ export class MessagesService {
   identify(name, client_id) {
     const existingName = Object.values(this.clientToUser).find((value) => value === name);
     if (existingName) {
+      console.log('existing name found: ', this.clientToUser[client_id]);
       return existingName;
     } else {
       this.clientToUser[client_id] = name;
+      console.log('new name added: ', this.clientToUser[client_id])
+      console.log('total clientToUser object: ', this.clientToUser);
       return this.clientToUser[client_id];
     }
   }
   
 getClientName(client_id: string) {
+  console.log('inside getclientname', client_id, 'and clientToUser: ', this.clientToUser);
   return this.clientToUser[client_id];
 }
 
