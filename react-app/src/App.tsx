@@ -41,6 +41,7 @@ const [currentClient, setCurrentClient] = useState(() =>
     newSocket.on('typingName', ({ name, isTypingStateFromServer }) => {
       if (isTypingStateFromServer) {
         setTyping(`${name} is typing`);
+        console.log(typingDisplay)
       } else {
         setTyping('');
       }
@@ -73,7 +74,7 @@ const [currentClient, setCurrentClient] = useState(() =>
 
   const sendMessage = (e) => {
     e.preventDefault();
-    socket?.emit('createMessage', { name: currentClient, text: messageValue }, () => {
+    socket?.emit('createMessage', {text: messageValue }, () => {
       
          });
          setMessageValue('');
@@ -92,7 +93,7 @@ const [currentClient, setCurrentClient] = useState(() =>
               ))}
               <div className="join-container">   
               <h1>Typing statusss;;</h1>           
-                <h2>{typingDisplay}</h2>
+                <h2>{typingDisplay? typingDisplay: ""}</h2>
                 <form onSubmit={sendMessage}>
                 <input
                 value={messageValue}
@@ -108,7 +109,7 @@ const [currentClient, setCurrentClient] = useState(() =>
             <div className="join-container">
               <h1>Please join first!</h1>
               <input
-                
+                required
                 type="text"
                 placeholder="Name..."
                 onChange={(e) => setName(e.target.value)}

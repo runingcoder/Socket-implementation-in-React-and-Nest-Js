@@ -6,7 +6,7 @@ export class MessagesService {
   messages: Message[] = [{name:'john', text:'hello'}, {name:'doe', text:'hi'}, {name:'johnny', text:'Bye'}, {name:'Doeja Cat', text:'You right'}
 
 ];
-  clientToUser = {'tcmN_63THuJaycVXAAA1': 'Achyut', 'PesH-KVxQ0wI1xCDAAA3': 'Elina' }
+  clientToUser = {'tcmN_63THuJaycVXAAA1': 'Achyut', 'PesH-KVxQ0wI1xCDAAA3': 'Aarya' }
 
   identify(name, client_id) {
     const existingName = Object.values(this.clientToUser).find((value) => value === name);
