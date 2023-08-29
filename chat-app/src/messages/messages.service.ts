@@ -8,19 +8,30 @@ export class MessagesService {
 ];
   clientToUser = {}
 
-  identify(name: string, client_id: string) {
-    this.clientToUser[client_id] = name;
-    return Object.values(this.clientToUser) 
+  identify(name, client_id) {
+    const existingName = Object.values(this.clientToUser).find((value) => value === name);
+    if (existingName) {
+      return existingName;
+    } else {
+      this.clientToUser[client_id] = name;
+      return this.clientToUser[client_id];
+    }
   }
+  
 getClientName(client_id: string) {
   return this.clientToUser[client_id];
 }
 
-  create(text: string, clientId: string) {
+  create(text: string, client: string) {
+    console.log("create method called with client name: ", client );
+    console.log("Current clientToUser object: ", this.clientToUser);
+    const name = client;
+    console.log("Retrieved name: ", name);
     const message = {
-      name: this.clientToUser[clientId],
+      name: name,
       text: text,
     }
+    console.log("Created message: ", message);
     this.messages.push(message);
     return message;
   }

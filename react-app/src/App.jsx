@@ -5,6 +5,8 @@ import { io } from "socket.io-client";
 function App() {
   const socket = io("http://localhost:3000");
 
+
+const [currentClient, setCurrentClient] = useState('');  
   const [messageValue, setMessageValue] = useState('');
   const [messages, setMessages] = useState([]);
   const [joined, setJoined] = useState(false);
@@ -38,19 +40,21 @@ function App() {
   const emitTyping = () => {
     socket.emit('typing', { typingDisplay: true });
     timeout = setTimeout(() => {
-    socket.emit('typing', { typingDisplay: false });}, 2000)
+      socket.emit('typing', { typingDisplay: false });}, 2000)
    
   }
   // sus
 
   const JoinAction = () => {
-    socket.emit('join', { name: name }, () => {
+    socket.emit('join', { name: name }, (response) => {
+      setCurrentClient(response)
       setJoined(true);
+      console.log(joined)
     });
   }
 
   const sendMessage = () => {
-    socket.emit('createMessage', { text: messageValue }, () => {
+    socket.emit('createMessage', { name: currentClient, text: messageValue }, () => {
       setMessageValue('');
          });
   }
@@ -73,7 +77,7 @@ function App() {
                   type="text"
                   placeholder="Type a message..."
                   onInput={emitTyping}
-                  value={messageValue}
+                  
                   onChange={(e) => setMessageValue(e.target.value)}
                 />
                 <button onClick={sendMessage}>Send</button>
@@ -83,6 +87,7 @@ function App() {
             <div className="join-container">
               <h1>Please join first!</h1>
               <input
+                
                 type="text"
                 placeholder="Name..."
                 onChange={(e) => setName(e.target.value)}

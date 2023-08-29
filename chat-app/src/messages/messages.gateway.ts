@@ -18,7 +18,7 @@ export class MessagesGateway {
   @WebSocketServer()
   // reference to the websocket instance
   server: Server;
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(private readonly messagesService: MessagesService) { }
 
   @SubscribeMessage('findAllMessages')
   findAll() {
@@ -27,27 +27,45 @@ export class MessagesGateway {
   // here, 'createMessage' is the event.
   @SubscribeMessage('createMessage')
   async create(
+    @MessageBody('name') client: string,
     @MessageBody('text') text: string,
-    @ConnectedSocket() client: Socket,
+   
   ) {
-    const message = this.messagesService.create(text, client.id);
+    const message = await this.messagesService.create(text, client);
     // emitting the message to every connected client
     // adsfa.emit('emitmessage', payload)
     this.server.emit('message', message);
     return message;
     // only text is beig sent in the messaeg adn not name, why.
   }
-  @SubscribeMessage('join')
   // @ConnectedSocket() client: Socket  is reference to the client that is sending the message
 
+  @SubscribeMessage('join')
   join(@MessageBody('name') name: string, @ConnectedSocket() client: Socket) {
-    return this.messagesService.identify(name, client.id);
-    // returns all the names of the clients from the clienTuser object, although not using the 
+    console.log(
+      'join method called with name: ',
+      name,
+      ' and client_id: ',
+      client.id,
+    );
+    const result = this.messagesService.identify(name, client.id);
+
+    console.log(
+      'Updated clientToUser object: ',
+      this.messagesService.clientToUser,
+    );
+    console.log('What is getting returned', result)
+    return result;
+
+    // returns all the names of the clients from the clienTuser object, although not using the
     // response in the client side.
   }
 
   @SubscribeMessage('typing')
-  typing(@MessageBody('isTyping') isTyping: boolean, @ConnectedSocket() client: Socket) {
+  typing(
+    @MessageBody('isTyping') isTyping: boolean,
+    @ConnectedSocket() client: Socket,
+  ) {
     // the one who send request to typing, his client id is stored in the client object
     // and we get it's name.
     const name = this.messagesService.getClientName(client.id);
