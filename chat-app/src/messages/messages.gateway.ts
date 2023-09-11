@@ -32,9 +32,10 @@ export class MessagesGateway {
   async create(
     @ConnectedSocket() client: Socket,
     @MessageBody('text') text: string,
+    @MessageBody('name') name: string,
    
   ) {
-    const message = await this.messagesService.create(text, client.id);
+    const message = await this.messagesService.create(text, name);
     // emitting the message to every connected client
     // adsfa.emit('emitmessage', payload)
     this.server.emit('message', message);
@@ -71,12 +72,12 @@ export class MessagesGateway {
   ) {
     // the one who send request to typing, his client id is stored in the client object
     // and we get it's name.
-    console.log(client.id)
+    // console.log(client.id)
     const name = this.messagesService.getClientName(client.id);
-    console.log("This is the name in typing function that will be returned",name)
+    // console.log("This is the name in typing function that will be returned",name)
     // need to send the typing status to clients (two users) but using broadcast sends it to the
     // non sender only, -- the other receiver
-    console.log('typing method called with name: ', name, ' and isTyping: ', isTyping)
+    // console.log('typing method called with name: ', name, ' and isTyping: ', isTyping)
     client.broadcast.emit('type', { name, isTyping });
   }
 }

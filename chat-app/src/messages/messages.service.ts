@@ -28,14 +28,14 @@ getClientName(client_id: string) {
   return this.clientToUser[client_id];
 }
 
-  create(text: string, clientId: string) {
-    console.log("create method called with client Id: ", clientId );
+  create(text: string, name: string) {
+    // console.log("create method called with client Id: ", clientId );
     console.log("Current clientToUser object: ", this.clientToUser);
     const message = {
-      name: this.clientToUser[clientId],
+      name: name,
       text: text,
     }
-    console.log(this.clientToUser[clientId])
+    console.log("name is ", name)
     console.log("Created message: ", message);
     this.messages.push(message);
     console.log("Updated messages array: ", this.messages);
