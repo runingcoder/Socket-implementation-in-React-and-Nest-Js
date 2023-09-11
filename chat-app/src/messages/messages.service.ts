@@ -3,7 +3,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { Message } from './entities/message.entity';
 @Injectable()
 export class MessagesService { 
-  messages: Message[] = [{name:'john', text:'hello'}, {name:'doe', text:'hi'}, {name:'johnny', text:'Bye'}, {name:'Doeja Cat', text:'You right'}
+  messages: Message[] = [{name:'Pedri', text:'Who will win the Kopa Trophy this year?'}, {name:'Gavi', text:'Might Just be me.'}, {name:'Bellingham', text:'Might Just be me.'}
 
 ];
   clientToUser = {}

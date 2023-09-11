@@ -21,11 +21,7 @@ function App() {
   const [joinName, setName] = useState('');
   const [typingDisplay, setTyping] = useState('');
 
-  const toggleClick = () => {
 
-    console.log("The typig dispolay from onClick is ", typingDisplay)
-    setClick(!click);
-  }
 
 
   useEffect(() => {
@@ -97,21 +93,19 @@ function App() {
     <div className="chat">
       <div className="chat-container">
         <div className="messages-container">
-          <button onClick={toggleClick}>Click me!!</button>
 
 
 
           {joined ? (
             <>
+           <h1 style={{ color: 'green' }}>Let's start the chat!</h1>
               {messages.map((message, index) => (
                 <div key={index} className="message">
                   <h1>[{message.name} : {message.text}]</h1>
                 </div>
               ))}
               <div className="join-container">
-                <h1>Typing statusss;;</h1>
-                <h2>{typingDisplay}</h2>
-
+             
                 <form onSubmit={sendMessage}>
                   <input
                     value={messageValue}
