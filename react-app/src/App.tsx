@@ -37,6 +37,7 @@ function App() {
 
     // socket.emit('eventname', payload, response)
     newSocket.emit('findAllMessages', {}, (response) => {
+      console.log(messages)
       setMessages(response);
     });
     // get's new message for updating the value of messages state in the client.
@@ -86,7 +87,7 @@ function App() {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    socket?.emit('createMessage', { text: messageValue }, () => {
+    socket?.emit('createMessage', { name: currentClient, text: messageValue }, () => {
 
     });
     setMessageValue('');
